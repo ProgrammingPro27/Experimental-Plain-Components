@@ -1,31 +1,24 @@
 body {
     /* background-color: #FFF8DC; */
-    background-color: blanchedalmond;
     height: 100vh;
     margin: 0;
     padding: 0;
     overflow: hidden;
     color: #432109;
     font-family: 'Roboto', sans-serif;
-}
-
-
-#menu {
-    width: 100%;
-    height: 100%;
-    background-color: rgba(240, 255, 255, 0.17);
+    background-color: blanchedalmond;
 }
 
 
 .menuWrapper {
-    /* background-color: blanchedalmond; */
+    width: 100%;
     height: 100%;
-    transition: width 0.5s;
+    transition: margin 0.5s;
 }
 
 .sideMenuControl {
     width: 100%;
-    height: 5%;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -34,18 +27,18 @@ body {
 .hamburgerMenu {
     font-size: 35px;
     cursor: pointer;
-    margin: 15px;
+    margin: 10px;
 }
 
 .sideMenuContentWrapper {
     width: 100%;
-    height: 95%;
+    height: calc(100% - 60px);
     overflow: auto;
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
     justify-content: center;
-    gap: 5px;
+    gap: 5px; 
 }
 
 .subMenuWrapper {
@@ -67,7 +60,22 @@ body {
     justify-content: center;
     font-size: 25px;
     font-weight: bold;
+}
+
+.subMenuWrapperShowHideButton {
+    width: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.contentWrapper{
+    width: 100%;
     height: 60px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .layerContent {
@@ -77,16 +85,8 @@ body {
     height: 0%;
 }
 
-.subMenuWrapperShowHideButton {
-    width: 20%;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 25px;
-    cursor: pointer;
-    border-radius: 0px 20px 20px 0px;
-}
+
+
 
 ::-webkit-scrollbar {
     width: 15px;
