@@ -14,12 +14,10 @@
 <body>
 
     <script src="component.js"></script>
-    <div id="menu">
 
-    </div>
     <script>
-        let wrapper = document.getElementById("menu")
-        let sideMenu = new SideMenu(wrapper, "right")
+
+        let sideMenu = new SideMenu(document.body, "right")
 
         sideMenu.createSideMenu("Parameter 1")
         .createSideMenu("Parameter 2")
