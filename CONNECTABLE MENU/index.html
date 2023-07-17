@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        font-weight: bold;
+        background-color: #404040;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    #wrapper {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
+
+    .mydiv {
+        position: absolute;
+        background-color: dimgray;
+        text-align: center;
+        border-radius: 10px 10px 0px 0px;
+    }
+
+    .mydivheader {
+        width: 200px;
+        height: 50px;
+        cursor: move;
+        background-color: orange;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        font-size: 20px;
+        border-radius: 10px 10px 0px 0px;
+    }
+
+    .property {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: transparent;
+    }
+
+    i {
+        cursor: pointer;
+    }
+
+    .c1 {
+        margin-left: -7.5px;
+    }
+
+    .c2 {
+        margin-right: -7.5px;
+    }
+
+    .connector {
+        font-size: 15px;
+        color: orange;
+    }
+
+    .propertyLabel {
+        color: #FDF5E6;
+    }
+
+    .wire {
+        stroke: orange;
+        stroke-width: 4;
+    }
+</style>
+
+<body>
+    <div id="wrapper"></div>
+    <svg id="svgCanvas" height="100%" width="100%"></svg>
+
+    <script>
+        let wrapper = document.getElementById("wrapper")
+        let svgCanvas = document.getElementById("svgCanvas");
+
+        function ConnectableBlock(parent, name) {
+            this.myDiv = document.createElement("DIV");
+            this.myDiv.className = "mydiv"
+
+            let mydivheader = document.createElement("DIV");
+            mydivheader.className = "mydivheader"
+
+            let functionNAME = document.createElement("P");
+            functionNAME.innerHTML = name
+            mydivheader.appendChild(functionNAME)
+
+            this.myDiv.appendChild(mydivheader)
+            parent.appendChild(this.myDiv)
+        }
+
+        ConnectableBlock.prototype.addProperty = function (propertyName) {
+            let propertyWrapper = document.createElement("DIV");
+            propertyWrapper.className = "property"
+
+            let leftConnector = document.createElement("I");
+            leftConnector.className = "fa-solid fa-circle connector c1"
+
+            let propertyLabel = document.createElement("P");
+            propertyLabel.className = "propertyLabel"
+            propertyLabel.innerHTML = propertyName
+
+            let rightConnector = document.createElement("I");
+            rightConnector.className = "fa-solid fa-circle connector c2"
+
+            propertyWrapper.appendChild(leftConnector)
+            propertyWrapper.appendChild(propertyLabel)
+            propertyWrapper.appendChild(rightConnector)
+
+            this.myDiv.appendChild(propertyWrapper)
+            return this;
+        }
+
+        let blockOne = new ConnectableBlock(wrapper, "Function No 1")
+        blockOne.addProperty("Property 1").addProperty("Property 2").addProperty("Property 3").addProperty("Property 4").addProperty("Property 5")
+        let blockTwo = new ConnectableBlock(wrapper, "Function No 2")
+        blockTwo.addProperty("Property 1").addProperty("Property 2")
+        let blockThree = new ConnectableBlock(wrapper, "Function No 3")
+        blockThree.addProperty("Property 1").addProperty("Property 2").addProperty("Property 3")
+        let blockFour = new ConnectableBlock(wrapper, "Function No 4")
+        blockFour.addProperty("Property 1").addProperty("Property 2").addProperty("Property 3").addProperty("Property 4")
+
+        dragElement(blockOne.myDiv);
+        dragElement(blockTwo.myDiv);
+        dragElement(blockThree.myDiv);
+        dragElement(blockFour.myDiv);
+
+        let currTargets = []
+        let paths = []
+        let cout = -1
+
+        function relateTwoElements(firstProperty, secondProperty) {
+            let path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('fill', 'transparent');
+            path.setAttribute('class', 'wire');
+            cout++
+            paths[cout] = [firstProperty, secondProperty, path]
+            currTargets = []
+            return paths[cout]
+        }
+
+        function connectTwoProperties(firstProperty, secondProperty, path) {
+            let B1 = firstProperty.getBoundingClientRect();
+            let B2 = secondProperty.getBoundingClientRect();
+
+            let controlPoint1X = B1.x + B1.width + 50;
+            let controlPoint1Y = B1.y + B1.height / 2;
+            let controlPoint2X = B2.x - 50;
+            let controlPoint2Y = B2.y + B2.height / 2;
+
+            let startX = B1.x + B1.width;
+            let startY = B1.y + B1.height / 2;
+            let endX = B2.x;
+            let endY = B2.y + B2.height / 2;
+
+            let pathData = `
+    M ${startX} ${startY}
+    C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${endX} ${endY}
+  `;
+            path.setAttribute('d', pathData);
+            svgCanvas.appendChild(path);
+        }
+
+        wrapper.addEventListener("click", function (e) {
+            if (e.target.parentElement.className == "property" && e.target.tagName == "I") {
+                currTargets.push(e.target)
+                if (currTargets.length == 2) {
+                    let functionName1 = currTargets[0].parentElement.parentElement.children[0].children[0].innerHTML;
+                    let functionName2 = currTargets[1].parentElement.parentElement.children[0].children[0].innerHTML;
+                    if (currTargets[0].classList[3] !== currTargets[1].classList[3] && functionName1 !== functionName2) {
+                        let curr = relateTwoElements(currTargets[0], currTargets[1])
+                        connectTwoProperties(curr[0], curr[1], curr[2])
+                    } else {
+                        currTargets = []
+                        alert("WRONG CONNECTION")
+                    }
+                }
+            }
+        })
+
+        function dragElement(elmnt) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (elmnt.children[0]) {
+                elmnt.children[0].onmousedown = dragMouseDown;
+            } else {
+                elmnt.onmousedown = dragMouseDown;
+            }
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+
+                for (let i = 0; i < paths.length; i++) {
+                    connectTwoProperties(paths[i][0], paths[i][1], paths[i][2])
+                }
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+    </script>
+
+</body>
+
+</html>
