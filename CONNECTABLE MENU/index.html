@@ -146,6 +146,12 @@
         }
 
         function connectTwoProperties(firstProperty, secondProperty, path) {
+            let temp = secondProperty
+            if (firstProperty.classList[3] == "c1") {
+                secondProperty = firstProperty
+                firstProperty = temp
+            }
+            
             let B1 = firstProperty.getBoundingClientRect();
             let B2 = secondProperty.getBoundingClientRect();
 
