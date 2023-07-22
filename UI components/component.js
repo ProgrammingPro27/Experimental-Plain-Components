@@ -22,10 +22,18 @@ function SideMenu(parent, side) {
     hamburgerMenu.addEventListener("click", function () {
         if (hamburgerMenu.classList == "fa-solid fa-bars hamburgerMenu") {
             hamburgerMenu.classList = "fa-solid fa-hamburger hamburgerMenu"
-            wrapp.style.marginRight = `-100%`
+            if (side == "right") {
+                wrapp.style.marginRight = `-100%`
+            } else {
+                wrapp.style.marginLeft = `-100%`
+            }
         } else {
             hamburgerMenu.classList = "fa-solid fa-bars hamburgerMenu"
-            wrapp.style.marginRight = "0%"
+             if (side == "right") {
+                wrapp.style.marginRight = `0%`
+            } else {
+                wrapp.style.marginLeft = `0%`
+            }
         }
     })
 
